@@ -22,21 +22,24 @@
 # \subsection{Automated policy}
 #
 class cron($allowed_users=[]) {
-
+    case $::osfamily {
+        'RedHat': {}
+        'Darwin': {}
+        default: { fail "unimplemented on ${::osfamily}" }
+    }
+# Below here, we dispense with defaults, because we have failed already if we
+# aren't using one of the above-listed osfamilies.
     $crontab = $::osfamily ? {
-        'darwin' => '/private/var/at/tabs/root',
-        'redhat' => '/etc/crontab',
-        default  => unimplemented,
+        'Darwin' => '/private/var/at/tabs/root',
+        'RedHat' => '/etc/crontab',
     }
     $cron_allow = $::osfamily ? {
-        'darwin' => '/private/var/at/cron.allow',
-        'redhat' => '/etc/cron.allow',
-        default  => unimplemented,
+        'Darwin' => '/private/var/at/cron.allow',
+        'RedHat' => '/etc/cron.allow',
     }
     $cron_deny = $::osfamily ? {
-        'darwin' => '/private/var/at/cron.deny',
-        'redhat' => '/etc/cron.deny',
-        default  => unimplemented,
+        'Darwin' => '/private/var/at/cron.deny',
+        'RedHat' => '/etc/cron.deny',
     }
 # Under Snow Leopard, \verb!/usr/lib/cron! is a symlink to \verb!../../var/at!,
 # and \verb!/var! is a symlink to \verb!/private/var!.
@@ -46,16 +49,14 @@ class cron($allowed_users=[]) {
 # Blackberries, so that emailing them at four in the morning would be a bad
 # idea. For such tasks, we have \verb!cron.morningly!.
     $cron_dirs = $::osfamily ? {
-        'darwin' => [ '/private/var/at' ],
-        'redhat' => [ '/etc/cron.d', '/etc/cron.morningly',
+        'Darwin' => [ '/private/var/at' ],
+        'RedHat' => [ '/etc/cron.d', '/etc/cron.morningly',
                      '/etc/cron.hourly', '/etc/cron.daily',
                      '/etc/cron.weekly', '/etc/cron.monthly' ],
-        default  => unimplemented,
     }
     $cron_tools = $::osfamily ? {
-        'darwin' => [ '/usr/sbin/cron', '/usr/bin/crontab' ],
-        'redhat' => [ '/usr/sbin/crond', '/usr/bin/crontab' ],
-        default  => unimplemented,
+        'Darwin' => [ '/usr/sbin/cron', '/usr/bin/crontab' ],
+        'RedHat' => [ '/usr/sbin/crond', '/usr/bin/crontab' ],
     }
 
     file {
@@ -108,7 +109,7 @@ class cron($allowed_users=[]) {
     }
 
     case $::osfamily {
-        'redhat': {
+        'RedHat': {
             cron { morningly:
                 command => "run-parts /etc/cron.morningly",
                 user => root,
@@ -138,7 +139,7 @@ root
 # some antivirus software may depend on its use with non-root users. Also we
 # don't yet do anything morningly on Macs, so we needn't worry about setting it
 # up.
-        'darwin': {}
+        'Darwin': {}
         default:  {}
     }
 }
