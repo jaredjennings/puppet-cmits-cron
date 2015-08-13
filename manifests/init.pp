@@ -63,17 +63,17 @@ class cron($allowed_users=[]) {
 # \implements{unixsrg}{GEN003250}%
 # Make sure only root can edit the {\tt cron.allow} file.
         $cron_allow:
-            owner => root, group => 0, mode => 0600;
+            owner => root, group => 0, mode => '0600';
 # \implements{macosxstig}{GEN003270 M6}%
 # \implements{unixsrg}{GEN003270}%
 # Make sure only root can edit the {\tt cron.deny} file.
         $cron_deny:
-            owner => root, group => 0, mode => 0600;
+            owner => root, group => 0, mode => '0600';
 
 # \implements{unixsrg}{GEN003040,GEN003050,GEN003080}%
 # Restrict access to the system {\tt crontab} to only root.
         $crontab:
-            owner => root, group => 0, mode => 0600;
+            owner => root, group => 0, mode => '0600';
 
 # \implements{macosxstig}{GEN003400 M6, GEN003420 M6}%
 # Control ownership and permissions of the ``at'' directory, which under Mac OS
@@ -86,7 +86,7 @@ class cron($allowed_users=[]) {
 # Also restrict access to the files in these directories.
         $cron_dirs:
             ensure => directory,
-            owner => root, group => 0, mode => go-rwx,
+            owner => root, group => 0, mode => 'go-rwx',
             recurse => true, recurselimit => 2;
     }
 

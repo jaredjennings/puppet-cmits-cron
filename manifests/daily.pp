@@ -25,7 +25,7 @@ define cron::daily($source) {
     case $::osfamily {
         'RedHat': {
             file { "/etc/cron.daily/${name}":
-                owner => root, group => 0, mode => 0700,
+                owner => root, group => 0, mode => '0700',
                 source => $source,
             }
         }
